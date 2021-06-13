@@ -9,7 +9,7 @@
 # YOUR CODE HERE 1 to read data
 import geopandas as gpd
 from pyproj import CRS
-data=gpd.GeoDataFrame()
+data=gpd.read_file('Kruger_posts.shp')
 
 
 # - Check the crs of the input data. If this information is missing, set it as epsg:4326 (WGS84).
@@ -26,17 +26,19 @@ print(data.head())
 
 # Check that the crs is correct after re-projecting (should be epsg:32735)
 print(data.crs)
-
-
 #  - Group the data by userid
 
-#  YOUR CODE HERE 3 to group 
-grouped=data.groupby('userid')
+#  YOUR CODE HERE 3 to group
 
+grouped=data.groupby("geometry")
+data["userid"]=None
+for i in range(len(data)):
+ data[i,"userid"]=data.crs
+print(data)
 # CODE FOR TESTING YOUR SOLUTION
 
 #Check the number of groups:
-assert len(grouped.groups) == data["userid"].nunique(), "Number of groups should match number of unique users!"
+assert len(grouped.groups) == data["userid"].unique(), "Number of groups should match number of unique users!"
 
 
 # **Create LineString objects for each user connecting the points from oldest to latest:**
@@ -47,8 +49,8 @@ import pandas as pd
 from shapely.geometry import LineString, Point
 movements=pd.DataFrame()
 movements['geometry']=None
-for key, movements in grouped:
- movements.at['geometry']=LineString(userid)
+for index, row in data[0:5].iterrows():
+ movements.at[0,'geometry']=LineString(grouped)
 # CODE FOR TESTING YOUR SOLUTION
 
 #Check the result
@@ -105,3 +107,4 @@ def func9():
 #check movements['distance']
 def func10():
     return movements
+    
