@@ -11,7 +11,9 @@ import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point
 # YOUR CODE HERE 1 to read data
-data = None
+data = pd.read_csv('data/some_posts.csv')
+Points = lambda row:Point(row['lat'],row['lon'])
+data['geometry'] = data.apply(Points, axis=1)
 
 
 # CODE FOR TESTING YOUR SOLUTION
@@ -31,7 +33,12 @@ import geopandas as gpd
 from pyproj import CRS
 
 # Convert DataFrame into a GeoDataFrame
-geo=None
+geo=gpd.GeoDataFrame()
+geo['geometry']=data['geometry']
+geo.crs = CRS.from_epsg(4326).to_wkt()
+fp='Kruger_posts.shp'
+geo.to_file(fp)
+
 # CODE FOR TESTING YOUR SOLUTION
 
 # Check the geodataframe head
@@ -50,6 +57,9 @@ assert os.path.isfile(fp), "output shapefile does not exist"
 # - **Create a simple map of the points** using the `plot()` -funtion. 
 
 # YOUR CODE HERE 3
+import matplotlib.pyplot as plt
+geo.plot()
+plt.show()
 
 # Well done! Now you can move on to Exercise_9_problem_3.
 
